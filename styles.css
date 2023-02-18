@@ -15,17 +15,12 @@ h1 {
     font-family: 'Nanum Myeongjo', serif;
 }
  
-h2 {
-    text-decoration: underline;
-    margin-left: 4em;
-    margin-bottom:0px;
-}
+
 
 p {
     font-size: 1.2em;
-    margin-top: -1.2em;
-    margin-left:10em;
-    margin-right:10em;
+    margin-left:10%;
+    margin-right:10%;
 }
 
 h4 {
