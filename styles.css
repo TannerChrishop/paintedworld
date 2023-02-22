@@ -2,6 +2,14 @@ body {
     background-color: oldlace;
   }
 
+  .logo {
+    display: block;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+  }
+
 h1, h4 {
     text-align: center;
     margin: .02em;
@@ -36,7 +44,7 @@ h5 {
 
 .photos {
     margin-top:2%;
-    background-color: wheat;
+    background-color: blanchedalmond;
     border-radius: 15%;
 }
 
