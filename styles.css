@@ -42,6 +42,19 @@ h5 {
     text-align:center;
 }
 
+.social {
+    margin-left:10%;
+    margin-top:-8%;
+}
+
+.fb {
+    width: 10%;
+}
+
+.ig {
+    width: 6%;
+}
+
 .photos {
     margin-top:2%;
     background-color: blanchedalmond;
@@ -77,4 +90,22 @@ img {
 footer {
     margin-top:2%;
     text-align: center;
+}
+
+@media only screen and (max-width: 610px) {
+    .social {
+        margin-left: -2%;
+        margin-top: -10%;
+    }
+
+    .photos {
+        margin-top: 10%;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .social {
+        margin-left: -2%;
+        margin-top: -18%;
+    }
 }
