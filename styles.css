@@ -53,6 +53,11 @@ h5 {
     width: 6%;
 }
 
+.gg {
+    margin-left:2%;
+    width: 6%;
+}
+
 .photos {
     margin-top:2%;
     background-color: blanchedalmond;
@@ -90,7 +95,7 @@ footer {
     text-align: center;
 }
 
-@media only screen and (max-width: 610px) {
+@media only screen and (max-width: 900px) {
     .social {
         margin-left: -2%;
         margin-top: -10%;
@@ -109,6 +114,13 @@ footer {
         margin-right: 2%;
         font-size: .9em;
         text-align: center;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .social {
+        margin-left: -2%;
+        margin-top: -14%;
     }
 }
 
