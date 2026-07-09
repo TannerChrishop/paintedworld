@@ -1,0 +1,14 @@
+# local photo backups - not part of the published site
+heic-originals/
+png-originals/
+
+# leftover folder pending deletion (locked by another process)
+paintedworld-master/
+
+# local tooling
+.claude/
+.vscode/
+
+# misc
+.DS_Store
+Thumbs.db
