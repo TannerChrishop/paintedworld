@@ -1,6 +1,7 @@
 # local photo backups - not part of the published site
 heic-originals/
 png-originals/
+jpg-originals/
 
 # leftover folder pending deletion (locked by another process)
 paintedworld-master/
