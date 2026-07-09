@@ -84,30 +84,36 @@
     );
     const rows = rowInfo.map(({ n }) => buildRow(n));
 
+    // On phones the stylesheet hides the right-hand photo, so the single
+    // visible image must be able to advance all the way to the last photo.
+    function maxPos(i) {
+        const twoVisible = getComputedStyle(rows[i].labels[1]).display !== "none";
+        return photos[i].length - (twoVisible ? 2 : 1);
+    }
+
     // Photos alternate After, Before, After, Before... down each row's folder,
     // so whichever photo lands on the left tells us which label goes where.
     function render(i) {
         const row = rows[i];
-        const p = pos[i];
-
-        row.imgs[0].src = photos[i][p];
-        row.imgs[1].src = photos[i][p + 1];
-        row.imgs[0].alt = `Painting project ${i + 1}, photo ${p + 1} of ${photos[i].length}`;
-        row.imgs[1].alt = `Painting project ${i + 1}, photo ${p + 2} of ${photos[i].length}`;
+        const max = maxPos(i);
+        const p = pos[i] = Math.min(pos[i], max);
 
         const leftIsAfter = p % 2 === 0;
         const sideLabels = [leftIsAfter ? "After" : "Before", leftIsAfter ? "Before" : "After"];
 
         [0, 1].forEach((j) => {
+            if (!photos[i][p + j]) return; // right-hand slot past the end (hidden on phones)
+            row.imgs[j].src = photos[i][p + j];
+            row.imgs[j].alt = `Painting project ${i + 1}, photo ${p + j + 1} of ${photos[i].length}`;
             const unlabeled = p + j >= unlabeledFrom[i];
             row.labels[j].classList.toggle("unlabeled", unlabeled);
             row.labels[j].dataset.label = unlabeled ? "" : sideLabels[j];
         });
 
         row.leftBtn.classList.toggle("disabled", p <= 0);
-        row.rightBtn.classList.toggle("disabled", p >= photos[i].length - 2);
+        row.rightBtn.classList.toggle("disabled", p >= max);
         row.leftBtn.disabled = p <= 0;
-        row.rightBtn.disabled = p >= photos[i].length - 2;
+        row.rightBtn.disabled = p >= max;
     }
 
     function cycleLeft(i) {
@@ -118,7 +124,7 @@
     }
 
     function cycleRight(i) {
-        if (pos[i] < photos[i].length - 2) {
+        if (pos[i] < maxPos(i)) {
             pos[i]++;
             render(i);
         }
@@ -128,5 +134,17 @@
         row.leftBtn.addEventListener("click", () => cycleLeft(i));
         row.rightBtn.addEventListener("click", () => cycleRight(i));
         render(i);
+    });
+
+    // Re-clamp and re-render when the layout flips between one and two photos
+    // (media-query listener plus debounced resize, for browsers that miss one)
+    const rerenderAll = () => rows.forEach((_, i) => render(i));
+    const mq = window.matchMedia("(max-width: 750px)");
+    if (mq.addEventListener) mq.addEventListener("change", rerenderAll);
+    else if (mq.addListener) mq.addListener(rerenderAll);
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(rerenderAll, 150);
     });
 })();
