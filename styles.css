@@ -180,6 +180,13 @@ li h5{
     display: inline-block;
     text-decoration-line: none;
 }
+.contact-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3rem;
+}
 .email {
     display: inline-block;
     font-size: 1.8rem;
@@ -439,19 +446,13 @@ img {
         row-gap: 3%;
     }
 
+    /* Keep body text at a readable ~16px on phones; only relax line-height */
     .about, .info {
-        font-size: 1.2rem;
-        line-height: 1.45;
-    }
-    .about h2 {
-        font-size: 2.3rem;
-    }
-    .about p {
-        font-size: 1rem;
+        line-height: 1.5;
     }
 
     .email {
-        font-size: 1.35rem;
+        font-size: 1.5rem;
     }
 
     .social img {
@@ -507,17 +508,10 @@ img {
     }
     .about, .info {
         padding: 5%;
-        font-size: 1rem;
-        line-height: 1.4;
-    }
-    .about h2 {
-        font-size: 2rem;
-    }
-    .about p {
-        font-size: 0.95rem;
+        line-height: 1.5;
     }
     .email {
-        font-size: 1rem;
+        font-size: 1.3rem;
     }
     .social img {
         width: 5.5rem;
