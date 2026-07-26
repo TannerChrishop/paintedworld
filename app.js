@@ -23,19 +23,31 @@
         }
     }
 
+    // How many files to probe at once. Asking one at a time costs a network
+    // round trip per file, which is what makes discovery slow on a real
+    // connection; a batch costs one round trip no matter how wide it is.
+    const PROBE_BATCH = 12;
+
+    // Length of the run of files that exist starting at index 0, e.g. how many
+    // rowN folders there are, or how many colN.jpg a folder holds.
+    async function countRun(urlFor) {
+        for (let found = 0; ; found += PROBE_BATCH) {
+            const hits = await Promise.all(
+                Array.from({ length: PROBE_BATCH }, (_, k) => exists(urlFor(found + k)))
+            );
+            const gap = hits.indexOf(false);
+            if (gap !== -1) return found + gap;
+        }
+    }
+
     // Discover Photos/row1, row2, ... until a folder is missing, then count
     // each folder's col0.jpg, col1.jpg, ... the same way.
     async function discoverRows() {
-        const rowNumbers = [];
-        for (let n = 1; ; n++) {
-            if (!(await exists(`Photos/row${n}/col0.jpg`))) break;
-            rowNumbers.push(n);
-        }
-        const counts = await Promise.all(rowNumbers.map(async (n) => {
-            let c = 1;
-            while (await exists(`Photos/row${n}/col${c}.jpg`)) c++;
-            return c;
-        }));
+        const rowCount = await countRun((i) => `Photos/row${i + 1}/col0.jpg`);
+        const rowNumbers = Array.from({ length: rowCount }, (_, i) => i + 1);
+        const counts = await Promise.all(
+            rowNumbers.map((n) => countRun((j) => `Photos/row${n}/col${j}.jpg`))
+        );
         return rowNumbers
             .map((n, i) => ({ n, count: counts[i] }))
             .filter((r) => r.count >= 2)
