@@ -8,6 +8,10 @@
         18: 6, // row 18: labels stop after the first 6 photos
     };
 
+    // Rows pinned to the top of the gallery, in the order listed here.
+    // Every other row follows in ascending folder order.
+    const PINNED_FIRST = [19];
+
     const gallery = document.getElementById("gallery");
     if (!gallery) return;
 
@@ -34,7 +38,15 @@
         }));
         return rowNumbers
             .map((n, i) => ({ n, count: counts[i] }))
-            .filter((r) => r.count >= 2);
+            .filter((r) => r.count >= 2)
+            .sort((a, b) => order(a.n) - order(b.n));
+    }
+
+    // Pinned rows sort ahead of everything else by taking negative positions;
+    // folder numbers are always 1 or greater, so the rest stay in ascending order.
+    function order(n) {
+        const i = PINNED_FIRST.indexOf(n);
+        return i === -1 ? n : i - PINNED_FIRST.length;
     }
 
     function buildRow(n) {
