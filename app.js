@@ -61,7 +61,7 @@
         return i === -1 ? n : i - PINNED_FIRST.length;
     }
 
-    function buildRow(n) {
+    function buildRow(n, eager) {
         const container = document.createElement("div");
         container.className = "container1";
 
@@ -81,7 +81,9 @@
             const col = document.createElement("div");
             col.className = `col${j}`;
             const img = document.createElement("img");
-            img.loading = "lazy";
+            // The top row is the first thing visitors scroll to, so it loads
+            // straight away rather than waiting to come into view.
+            img.loading = eager ? "eager" : "lazy";
             img.id = `row${n}col${j}`;
             col.appendChild(img);
             return col;
@@ -106,7 +108,7 @@
     const unlabeledFrom = rowInfo.map(({ n }) =>
         n in UNLABELED_FROM ? UNLABELED_FROM[n] : Infinity
     );
-    const rows = rowInfo.map(({ n }) => buildRow(n));
+    const rows = rowInfo.map(({ n }, i) => buildRow(n, i === 0));
 
     // On phones the stylesheet hides the right-hand photo, so the single
     // visible image must be able to advance all the way to the last photo.
