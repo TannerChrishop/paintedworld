@@ -2,7 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.paintedworld.ca/</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.paintedworld.ca/gallery.html</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.paintedworld.ca/contact.html</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>yearly</changefreq>
   </url>
 </urlset>

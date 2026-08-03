@@ -8,10 +8,6 @@
         18: 6, // row 18: labels stop after the first 6 photos
     };
 
-    // Rows pinned to the top of the gallery, in the order listed here.
-    // Every other row follows in ascending folder order.
-    const PINNED_FIRST = [19];
-
     const gallery = document.getElementById("gallery");
     if (!gallery) return;
 
@@ -40,25 +36,48 @@
         }
     }
 
-    // Discover Photos/row1, row2, ... until a folder is missing, then count
-    // each folder's col0.jpg, col1.jpg, ... the same way.
-    async function discoverRows() {
+    // Probe Photos/row1, row2, ... until a folder is missing, then count each
+    // folder's col0.jpg, col1.jpg, ... the same way. Roughly 230 requests, so
+    // this is the fallback rather than the normal path.
+    async function probeRows() {
         const rowCount = await countRun((i) => `Photos/row${i + 1}/col0.jpg`);
         const rowNumbers = Array.from({ length: rowCount }, (_, i) => i + 1);
         const counts = await Promise.all(
             rowNumbers.map((n) => countRun((j) => `Photos/row${n}/col${j}.jpg`))
         );
-        return rowNumbers
-            .map((n, i) => ({ n, count: counts[i] }))
-            .filter((r) => r.count >= 2)
-            .sort((a, b) => order(a.n) - order(b.n));
+        return rowNumbers.map((n, i) => ({ n, count: counts[i] }));
     }
 
-    // Pinned rows sort ahead of everything else by taking negative positions;
-    // folder numbers are always 1 or greater, so the rest stay in ascending order.
-    function order(n) {
-        const i = PINNED_FIRST.indexOf(n);
-        return i === -1 ? n : i - PINNED_FIRST.length;
+    // Photos/manifest.json lists the rows in display order with each one's photo
+    // count, so the gallery needs a single request. The file carries the order
+    // itself rather than deriving it, which is what lets a newly added folder
+    // sit on top while everything else stays where it was. Regenerate it when
+    // photos change.
+    async function readManifest() {
+        try {
+            const res = await fetch("Photos/manifest.json");
+            if (!res.ok) return null;
+            const data = await res.json();
+            const rows = (data.rows || []).map((r) => ({
+                n: Number(r.n),
+                count: Number(r.count),
+            }));
+            return rows.length ? rows : null;
+        } catch (e) {
+            return null; // missing or malformed - fall back to probing
+        }
+    }
+
+    async function discoverRows() {
+        const manifest = await readManifest();
+        if (manifest) {
+            // Already in display order; don't re-sort it.
+            return manifest.filter((r) => Number.isFinite(r.n) && r.count >= 2);
+        }
+        // No manifest to go by, so fall back to newest folder first.
+        return (await probeRows())
+            .filter((r) => Number.isFinite(r.n) && r.count >= 2)
+            .sort((a, b) => b.n - a.n);
     }
 
     function buildRow(n, eager) {
@@ -156,9 +175,122 @@
         }
     }
 
+    // Clicking a photo shows an enlarged copy floating above the page. The
+    // gallery underneath is never touched - no row or column changes size.
+    // Below the two-photo breakpoint a single photo already fills the row, so
+    // there is nothing to gain and clicking does nothing.
+    const zoom = (() => {
+        const narrow = window.matchMedia("(max-width: 750px)");
+
+        const overlay = document.createElement("div");
+        overlay.className = "zoom";
+        overlay.hidden = true;
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        overlay.setAttribute("aria-label", "Enlarged photo");
+
+        const stage = document.createElement("div");
+        stage.className = "zoom-stage";
+        const big = document.createElement("img");
+        const caption = document.createElement("p");
+        caption.className = "zoom-caption";
+        stage.append(big, caption);
+
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.className = "zoom-nav zoom-prev";
+        prevBtn.setAttribute("aria-label", "Previous photo");
+        prevBtn.innerHTML = '<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>';
+
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.className = "zoom-nav zoom-next";
+        nextBtn.setAttribute("aria-label", "Next photo");
+        nextBtn.innerHTML = '<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
+
+        overlay.append(prevBtn, stage, nextBtn);
+        document.body.appendChild(overlay);
+
+        let rowIdx = 0;
+        let photoIdx = 0;
+        let lastFocused = null;
+
+        function show(i, k) {
+            rowIdx = i;
+            photoIdx = Math.max(0, Math.min(k, photos[i].length - 1));
+            big.src = photos[i][photoIdx];
+            const labelled = photoIdx < unlabeledFrom[i];
+            const label = labelled ? (photoIdx % 2 === 0 ? "After" : "Before") : "";
+            const where = `${photoIdx + 1} of ${photos[i].length}`;
+            big.alt = `Painting project ${i + 1}, ${label ? label.toLowerCase() + ", " : ""}photo ${where}`;
+            caption.textContent = label ? `${label} — ${where}` : where;
+            prevBtn.disabled = photoIdx === 0;
+            nextBtn.disabled = photoIdx === photos[i].length - 1;
+            // Fetch the neighbours so stepping doesn't flash an empty frame.
+            [photoIdx - 1, photoIdx + 1].forEach((n) => {
+                if (photos[i][n]) new Image().src = photos[i][n];
+            });
+        }
+
+        function step(delta) {
+            const next = photoIdx + delta;
+            if (next >= 0 && next < photos[rowIdx].length) show(rowIdx, next);
+        }
+
+        function close() {
+            overlay.hidden = true;
+            big.removeAttribute("src");
+            if (lastFocused && lastFocused.focus) lastFocused.focus();
+        }
+
+        function open(i, k) {
+            if (narrow.matches) return; // one photo per row already
+            lastFocused = document.activeElement;
+            show(i, k);
+            overlay.hidden = false;
+            overlay.focus();
+        }
+
+        // Clicking the backdrop dismisses; the arrows must not.
+        overlay.addEventListener("click", (e) => {
+            if (e.target.closest(".zoom-nav")) return;
+            close();
+        });
+        prevBtn.addEventListener("click", () => step(-1));
+        nextBtn.addEventListener("click", () => step(1));
+
+        overlay.tabIndex = -1;
+        document.addEventListener("keydown", (e) => {
+            if (overlay.hidden) return;
+            if (e.key === "Escape") close();
+            else if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+            else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+        });
+
+        // Shrinking to the one-photo layout while zoomed would leave the
+        // overlay stranded, so dismiss it.
+        const onNarrow = () => { if (narrow.matches) close(); };
+        if (narrow.addEventListener) narrow.addEventListener("change", onNarrow);
+        else if (narrow.addListener) narrow.addListener(onNarrow);
+
+        return { open };
+    })();
+
     rows.forEach((row, i) => {
         row.leftBtn.addEventListener("click", () => cycleLeft(i));
         row.rightBtn.addEventListener("click", () => cycleRight(i));
+        row.imgs.forEach((img, j) => {
+            img.tabIndex = 0;
+            img.setAttribute("role", "button");
+            img.title = "Click to enlarge";
+            img.addEventListener("click", () => zoom.open(i, pos[i] + j));
+            img.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    zoom.open(i, pos[i] + j);
+                }
+            });
+        });
         render(i);
     });
 

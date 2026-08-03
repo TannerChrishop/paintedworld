@@ -2,16 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- The gallery now lives on the home page; send old links and search engines there -->
-    <meta http-equiv="refresh" content="0; url=index.html#gallery">
-    <meta name="robots" content="noindex, follow">
-    <link rel="canonical" href="https://www.paintedworld.ca/">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="Photos/logos+icons/pw3.png">
-    <title>Painted World - Photo Gallery</title>
+    <script src="https://kit.fontawesome.com/1d999554df.js" crossorigin="anonymous"></script>
+    <meta name="description" content="Before and after photos of painting projects by Painted World in St. Marys, Stratford, London, Kitchener & Waterloo, Ontario.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Photo Gallery - Painted World">
+    <meta property="og:description" content="Before and after photos of painting and home improvement projects across Southwestern Ontario.">
+    <meta property="og:image" content="https://www.paintedworld.ca/Photos/row19/col0.jpg">
+    <meta property="og:locale" content="en_CA">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://www.paintedworld.ca/gallery.html">
+    <meta property="og:url" content="https://www.paintedworld.ca/gallery.html">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=PT+Serif&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <title>Photo Gallery &mdash; Painted World</title>
 </head>
 <body>
-    <p>The photo gallery has moved to the
-       <a href="index.html#gallery">Painted World home page</a>.</p>
+    <header id="top">
+        <h1 class="sr-only">Painted World photo gallery &mdash; before and after painting projects</h1>
+        <svg class="header-logo" viewBox="0 0 600 150" width="600" height="150" role="img" aria-label="Painted World" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <title>Painted World</title>
+            <!-- The original paint roller stands in as the "P" -->
+            <image href="Photos/logos+icons/roller-p.png" xlink:href="Photos/logos+icons/roller-p.png" x="8" y="4" width="57" height="104"/>
+            <text x="54" y="104" font-family="'Oranienbaum', serif" font-size="100" fill="#26231F">ainted World</text>
+            <line x1="8" y1="128" x2="565" y2="128" stroke="#26231F" stroke-width="3"/>
+        </svg>
+        <h5 class = 'subheader'>Quality work. Fair prices. No shortcuts.</h5>
+        <nav class = "topbar sitenav" aria-label = "Main">
+            <a href = "index.html"><h3 class = "btn">Home</h3></a>
+            <a href = "gallery.html" aria-current = "page"><h3 class = "btn">Gallery</h3></a>
+            <a href = "contact.html"><h3 class = "btn">Get a Quote</h3></a>
+        </nav>
+        <p class = "headerphone">Call or text <a class = "contact-link" href = "tel:+14372151061">437-215-1061</a></p>
+    </header>
+    <section id="gallery">
+        <h2 class="gallery-title">Photo Gallery</h2>
+        <h5 class="subheader gallery-subtitle">Before &amp; after &mdash; use the arrows to browse each project</h5>
+    </section>
+    <section class = "cta">
+        <h2>Like what you see?</h2>
+        <p>Free, no-obligation estimates. You don't pay until the work is done
+           and you're happy with it.</p>
+        <nav class = "topbar">
+            <a href = "contact.html"><h3 class = "btn2">Get a Quote</h3></a>
+        </nav>
+    </section>
+    <footer class = "sitefooter">
+        <p class = "footer-contact">
+            <a class = "contact-link" href = "tel:+14372151061">437-215-1061</a>
+            <span class = "footer-sep">&middot;</span>
+            <a class = "contact-link" href = "mailto:paintedworld.admin@gmail.com">paintedworld.admin@gmail.com</a>
+        </p>
+        <div class = "social">
+            <a href = "https://www.facebook.com/profile.php?id=100090608674572">
+                <img class = "icon" src = "Photos/logos+icons/fbicon.png" alt = "Facebook">
+            </a>
+            <a href = "mailto:paintedworld.admin@gmail.com" aria-label = "Email Painted World">
+                <i class="fa-solid fa-envelope social-envelope" aria-hidden="true"></i>
+            </a>
+            <a href = "https://maps.google.com/?cid=5041142877423777970">
+                <img class = "icon" src = "Photos/logos+icons/googleicon.png" alt = "Google reviews">
+            </a>
+            <a href = "https://www.instagram.com/painted_w0rld/">
+                <img class = "icon" src = "Photos/logos+icons/igicon.png" alt = "Instagram">
+            </a>
+        </div>
+        <h3>Paint makes a world of difference!</h3>
+    </footer>
+    <script src="app.js"></script>
 </body>
 </html>
