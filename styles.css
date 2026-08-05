@@ -470,41 +470,6 @@ img {
     font-size: 3.6rem;
 }
 
-/* A social link that's temporarily unavailable: greyed out, crossed through,
-   and not a link at all, so nobody is sent to a page that isn't there. */
-.social-down {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: not-allowed;
-}
-.social-down img {
-    filter: grayscale(100%);
-    opacity: 0.4;
-}
-.social-down::before,
-.social-down::after {
-    content: "";
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 50%;
-    height: 3px;
-    border-radius: 2px;
-    background: #B3402F;
-}
-.social-down::before { transform: translateY(-50%) rotate(45deg); }
-.social-down::after  { transform: translateY(-50%) rotate(-45deg); }
-.social-note {
-    margin-top: 0.4rem;
-    font-family: 'PT Serif', serif;
-    font-size: 1.3rem;
-    font-style: italic;
-    color: #6B655D;
-    text-align: center;
-}
-
 /* Contact page */
 .contact-layout {
     grid-template-rows: auto;
