@@ -2,7 +2,7 @@ Painted World
 ===============
 
 Static website for Painted World — painting and home improvement services
-in St. Marys, Stratford, London, Kitchener, Waterloo, and nearby areas in
+in St. Marys, Stratford, London, Kitchener, Waterloo, Ingersoll, Norwich, Woodstock, and nearby communities in
 Southwestern Ontario.
 
 Project structure:
